@@ -31,13 +31,10 @@
       list-style: none;
       padding: 0;
     }
-    
-    
   </style>
 </head>
 
 <body>
-
   <div class="container">
     <h1>Bienbenido a POPEYES</h1>
     <h1>Reserva tu Mesa</h1>
@@ -48,58 +45,9 @@
       <button type="submit">Reservar</button>
     </form>
 
-    
-
     <ul id="reservations"></ul>
   </div>
 
-  <script>
-  const form = document.getElementById('reservation-form');
-const nameInput = document.getElementById('name');
-const datetimeInput = document.getElementById('datetime');
-const reservationsList = document.getElementById('reservations');
-const seeReservationsBtn = document.getElementById('see-reservations');
-
-
-let reservations = [];
-
-const addReservation = () => {
-  const name = nameInput.value;
-  const datetime = datetimeInput.value;
-
-  reservations.push({name, datetime});
-
-  render();
-}
-
-const render = () => {
-  reservationsList.innerHTML = ' ';
-
-  reservations.forEach(r => {
-    const li = document.createElement('li');
-    li.innerText = `${r.name} - ${r.datetime}`;
-
-    reservationsList.appendChild(li); 
-  });
-}
-
-
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  
-  addReservation();
-
-  nameInput.value = '';
-  datetimeInput.value = '';
-});
-
-seeReservationsBtn.addEventListener('click', () => {
-  render();
-});
-
-
-render();
-  </script>
-  
+  <script src="reservations.js"></script>
 </body>
 </html>
