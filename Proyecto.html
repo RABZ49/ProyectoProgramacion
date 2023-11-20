@@ -32,17 +32,14 @@
       padding: 0;
     }
     
-    #reservations li {
-      margin-bottom: 10px; 
-      padding-bottom: 10px;
-      border-bottom: 1px solid #ddd;
-    }
+    
   </style>
 </head>
 
 <body>
 
   <div class="container">
+    <h1>Bienbenido a POPEYES</h1>
     <h1>Reserva tu Mesa</h1>
 
     <form id="reservation-form">
@@ -51,7 +48,7 @@
       <button type="submit">Reservar</button>
     </form>
 
-    <button id="see-reservations">Ver Reservas</button>
+    
 
     <ul id="reservations"></ul>
   </div>
@@ -76,7 +73,7 @@ const addReservation = () => {
 }
 
 const render = () => {
-  reservationsList.innerHTML = '';
+  reservationsList.innerHTML = ' ';
 
   reservations.forEach(r => {
     const li = document.createElement('li');
