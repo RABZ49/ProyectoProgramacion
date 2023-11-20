@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sistema de Reservas</title>
+</head>
+
+<body>
+
+  <h1>Hacer una reserva</h1>
+
+  <form id="reservation-form">
+    <input type="text" id="name" placeholder="Nombre">
+    <input type="datetime-local" id="datetime" placeholder="Fecha y hora">
+    <button type="submit">Reservar</button>
+  </form>
+
+  <button id="see-reservations">Ver Reservas</button>
+  
+  <div id="reservations-list"></div>
+
+  <script>
+
+    let reservations = [];
+
+    function checkAvailability(datetime) {
+      return reservations.every(r => r.datetime !== datetime);
+    }
+
+    function createReservation(name, datetime) {
+      if (checkAvailability(datetime)) {
+        let newReservation = {
+          name,
+          datetime
+        };
+        reservations.push(newReservation);
+        return true;
+      }
+      return false;
+    }
+
+    function showReservations() {
+      let html = '<ul>';
+      reservations.forEach(r => {
+        html += `<li>${r.name} - ${r.datetime}</li>`;
+      });
+      html += '</ul>';
+      document.getElementById('reservations-list').innerHTML = html;
+    }
+
+    const form = document.getElementById('reservation-form');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      
+      let name = form.elements['name'].value;
+      let datetime = form.elements['datetime'].value;
+
+      if (createReservation(name, datetime)) {
+        alert('Reserva creada!');
+        showReservations();
+      } else {
+        alert('Lo sentimos, ese horario no está disponible');
+      }
+
+    });
+
+    let seeReservationsBtn = document.getElementById('see-reservations');
+    seeReservationsBtn.addEventListener('click', showReservations);
+
+  </script>
+
+</body>
+</html>
