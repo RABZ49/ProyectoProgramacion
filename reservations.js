@@ -1,35 +1,31 @@
-const form = document.getElementById('reservation-form');
-const nameInput = document.getElementById('name');
-const datetimeInput = document.getElementById('datetime');
-const reservationsList = document.getElementById('reservations');
+const reservations = [];
 
-let reservations = [];
-
-const addReservation = () => {
-  const name = nameInput.value;
-  const datetime = datetimeInput.value;
-
-  reservations.push({name, datetime});
-
-  render();
+function addReservation(name, dateTime) {
+  return reservations.some(r => r.dateTime === dateTime)
+    ? alert('Esa mesa ya está reservada para esa fecha/hora')
+    : reservations.push({ name, dateTime });  
 }
 
-const render = () => {
-  reservationsList.innerHTML = ' ';
-
-  reservations.forEach(r => {
-    const li = document.createElement('li');
-    li.innerText = `${r.name} - ${r.datetime}`;
-
-    reservationsList.appendChild(li); 
-  });
-}
-
-form.addEventListener('submit', e => {
+document.getElementById('reservation-form').addEventListener('submit', e => {
   e.preventDefault();
   
-  addReservation();
-
-  nameInput.value = '';
-  datetimeInput.value = '';
+  const name = document.getElementById('name').value;
+  const dateTime = document.getElementById('datetime').value;
+  
+  addReservation(name, dateTime);
+  
+  displayReservations();
 });
+
+function displayReservations() {
+  const resElement = document.getElementById('reservations');
+  
+  resElement.innerHTML = '';
+  
+  reservations.forEach(r => {
+    const li = document.createElement('li');
+    li.textContent = `${r.name} - ${r.dateTime}`;
+    
+    resElement.appendChild(li);
+  });
+}

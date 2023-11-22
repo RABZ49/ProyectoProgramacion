@@ -1,53 +1,86 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Reserva Mesa</title>
   <style>
-    body {
-      font-family: Arial;
-    }
-    
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-      padding: 20px;
-      background: #f2f2f2;
-      border-radius: 10px;
-    }
-    
-    input, button {
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    
-    button {
-      background: #007bff;
-      color: #fff;
-    }
-    
-    #reservations {
-      list-style: none;
-      padding: 0;
-    }
+  #tables h2 {
+  text-align: center;
+}
+
+.tables-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.table {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 30%;
+}
+
+.table-status {
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.table-status.available {
+  background: green;
+  color: white;
+}
+
+.table-status.reserved {
+  background: red;
+  color: white;
+}
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>Bienbenido a POPEYES</h1>
-    <h1>Reserva tu Mesa</h1>
 
-    <form id="reservation-form">
-      <input type="text" id="name" placeholder="Nombre">
-      <input type="datetime-local" id="datetime" placeholder="Fecha y hora">
-      <button type="submit">Reservar</button>
-    </form>
+  <div id="tables">
 
-    <ul id="reservations"></ul>
+    <h2>Nuestras Mesas</h2>
+
+    <div class="tables-container">
+
+      <div class="table">
+        <h3>Mesa 1</h3>
+        <div class="table-status available">Disponible</div>
+      </div>
+
+      <div class="table">
+        <h3>Mesa 2</h3>
+         <div class="table-status available">Disponible</div>
+      </div>
+
+      <div class="table">
+        <h3>Mesa 3</h3>
+         <div class="table-status available">Disponible</div>
+      </div>
+
+    </div>
+
   </div>
 
-  <script src="reservations.js"></script>
+  <script>
+    // Javascript
+    
+    const tables = document.querySelectorAll('.table');
+
+    function updateTables() {
+      // Código para actualizar estado de mesas
+    }
+
+    document.getElementById('reserve-button').addEventListener('click', () => {
+      // Código para reservar mesa
+
+      updateTables();
+    });
+
+    updateTables();
+
+  </script>
+
 </body>
 </html>
