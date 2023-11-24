@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  
+  
+  <style>
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: rgb(85, 40, 249);
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    #login,
+    #reservation {
+      width: 400px;
+      margin: 50px auto; 
+      padding: 30px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px; 
+    }
+
+    button {
+      width: 100%;
+      background-color: #4CAF50;
+      padding: 10px;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049; 
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div id="login">
+    <h2>Bienvenido a POPEYES</h2>
+    <h1>Iniciar Sesión para realizar tu reservación</h1>
+    <input type="text" id="username" placeholder="Usuario">
+    <input type="password" id="password" placeholder="Contraseña">    
+    <button onclick="login()">Entrar</button> 
+  </div>
+
+  <div id="main" style="display:none">
+
+    <div>
+      <button onclick="logout()">Cerrar Sesión</button>
+    </div>
+
+    <h1>Página Principal</h1>
+
+    <div id="reservation">
+
+      <h1>Hacer una Reserva</h1>
+    
+      <input type="text" id="client-name" placeholder="Nombre Cliente">
+      <input type="number" id="guests" placeholder="Invitados">   
+      <input type="datetime-local" id="datetime">
+
+      <button onclick="makeReservation()">Reservar</button>
+
+      <h2>Mis Reservas</h2>
+
+      <div id="my-reservations"></div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    // Almacenamiento en memoria temporal
+    let reservations = [];
+
+    // usuarios
+    const users = [
+      {
+        username: 'roberto',
+        password: '1234'
+      },
+      {
+        username: 'josue', 
+        password: '5678'
+      }
+    ];
+
+    function login() {
+       
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Validacion de datos
+      const user = users.find(u => u.username === username && u.password === password);
+
+      if (user) {
+        
+        showMainPage();
+
+      } else {
+        alert('Datos de acceso inválidos');
+      }
+    }
+
+    function makeReservation() {
+
+const clientName = document.getElementById('client-name').value;
+const guests = document.getElementById('guests').value;
+const datetime = document.getElementById('datetime').value;
+
+const reservationDate = new Date(datetime).toDateString();
+
+if(guests > 300) {
+  alert('Máximo 300 invitados');
+  return;
+}
+
+if(reservations.some(r => {
+  const date = new Date(r.datetime).toDateString();
+  return date === reservationDate;  
+})) {
+  alert('Ya existe una reservación para ese día');
+  return;
+}
+
+const reservation = {
+  clientName,
+  guests,
+  datetime  
+};
+
+reservations.push(reservation);
+
+showMyReservations();
+
+}
+
+    function showMainPage() {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("main").style.display = "block";
+    }
+
+    function logout() {
+      document.getElementById("main").style.display = "none";
+      document.getElementById("login").style.display = "block";
+    }
+
+    function showMyReservations() {
+
+const container = document.getElementById('my-reservations');
+
+container.innerHTML = '';
+
+reservations.forEach(r => {
+  container.innerHTML += `
+    <div>
+      <b>Cliente:</b> ${r.clientName} <br>
+      <b>Invitados:</b> ${r.guests} <br> 
+      <b>Fecha/hora:</b> ${r.datetime}
+    </div>
+  `;
+});
+
+}
+
+  </script>
+
+</body>
+
+</html>
