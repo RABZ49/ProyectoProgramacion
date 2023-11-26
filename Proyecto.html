@@ -2,10 +2,8 @@
 <html>
 
 <head>
-  
-  
+
   <style>
-    
     body {
       font-family: Arial, sans-serif;
       background-color: rgb(85, 40, 249);
@@ -18,7 +16,7 @@
     #login,
     #reservation {
       width: 400px;
-      margin: 50px auto; 
+      margin: 50px auto;
       padding: 30px;
       background-color: white;
       border-radius: 10px;
@@ -30,7 +28,7 @@
       padding: 10px;
       margin-bottom: 20px;
       border: 1px solid #ccc;
-      border-radius: 5px; 
+      border-radius: 5px;
     }
 
     button {
@@ -44,9 +42,8 @@
     }
 
     button:hover {
-      background-color: #45a049; 
+      background-color: #45a049;
     }
-
   </style>
 
 </head>
@@ -57,8 +54,8 @@
     <h2>Bienvenido a POPEYES</h2>
     <h1>Iniciar Sesión para realizar tu reservación</h1>
     <input type="text" id="username" placeholder="Usuario">
-    <input type="password" id="password" placeholder="Contraseña">    
-    <button onclick="login()">Entrar</button> 
+    <input type="password" id="password" placeholder="Contraseña">
+    <button onclick="login()">Entrar</button>
   </div>
 
   <div id="main" style="display:none">
@@ -72,9 +69,9 @@
     <div id="reservation">
 
       <h1>Hacer una Reserva</h1>
-    
-      <input type="text" id="client-name" placeholder="Nombre Cliente">
-      <input type="number" id="guests" placeholder="Invitados">   
+
+      <input type="number" id="client-id" placeholder="Número de cédula">
+      <input type="number" id="guests" placeholder="Invitados">
       <input type="datetime-local" id="datetime">
 
       <button onclick="makeReservation()">Reservar</button>
@@ -99,13 +96,13 @@
         password: '1234'
       },
       {
-        username: 'josue', 
+        username: 'josue',
         password: '5678'
       }
     ];
 
     function login() {
-       
+
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
@@ -113,8 +110,9 @@
       const user = users.find(u => u.username === username && u.password === password);
 
       if (user) {
-        
+
         showMainPage();
+        clientName = username;
 
       } else {
         alert('Datos de acceso inválidos');
@@ -123,36 +121,40 @@
 
     function makeReservation() {
 
-const clientName = document.getElementById('client-name').value;
-const guests = document.getElementById('guests').value;
-const datetime = document.getElementById('datetime').value;
+      const clientId = document.getElementById('client-id').value;
+      const guests = document.getElementById('guests').value;
+      const datetime = document.getElementById('datetime').value;
+      const reservationDate = new Date(datetime).toDateString();
+      if (reservations.some(r => r.clientId === clientId)) {
+        alert("Ya existe una reservación con ese número de cédula");
+        return;
+      }
 
-const reservationDate = new Date(datetime).toDateString();
+      if (reservations.some(r => {
+        const date = new Date(r.datetime).toDateString();
+        return date === reservationDate;
+      })) {
+        alert('Ya existe una reservación para ese día');
+        return;
+      }
 
-if(guests > 300) {
-  alert('Máximo 300 invitados');
-  return;
-}
+      if (guests > 300) {
+        alert('Máximo 300 invitados');
+        return;
+      }
 
-if(reservations.some(r => {
-  const date = new Date(r.datetime).toDateString();
-  return date === reservationDate;  
-})) {
-  alert('Ya existe una reservación para ese día');
-  return;
-}
+      const reservation = {
+        clientName,
+        clientId,
+        guests,
+        datetime
+      };
 
-const reservation = {
-  clientName,
-  guests,
-  datetime  
-};
+      reservations.push(reservation);
 
-reservations.push(reservation);
+      showMyReservations();
 
-showMyReservations();
-
-}
+    }
 
     function showMainPage() {
       document.getElementById("login").style.display = "none";
@@ -166,21 +168,22 @@ showMyReservations();
 
     function showMyReservations() {
 
-const container = document.getElementById('my-reservations');
+      const container = document.getElementById('my-reservations');
 
-container.innerHTML = '';
+      container.innerHTML = '';
 
-reservations.forEach(r => {
-  container.innerHTML += `
-    <div>
-      <b>Cliente:</b> ${r.clientName} <br>
-      <b>Invitados:</b> ${r.guests} <br> 
-      <b>Fecha/hora:</b> ${r.datetime}
-    </div>
-  `;
-});
+      reservations.forEach(r => {
+        container.innerHTML += `
+        <div>
+          <b>Cliente:</b> ${r.clientName} <br>
+          <b>Cédula:</b> ${r.clientId} <br>  
+          <b>Invitados:</b> ${r.guests} <br>
+          <b>Fecha/hora:</b> ${r.datetime}
+        </div>
+      `;
+      });
 
-}
+    }
 
   </script>
 
