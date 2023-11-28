@@ -44,6 +44,28 @@
     button:hover {
       background-color: #45a049;
     }
+
+    
+    #my-reservations div {
+      margin-bottom: 20px;
+    }
+
+    #reservation-message {
+      margin-top: 20px;
+      padding: 10px;
+      border-radius: 5px;
+      display: none;
+    }
+
+    .success {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .error {
+      background-color: #f44336;
+      color: white;
+    }
   </style>
 
 </head>
@@ -71,10 +93,12 @@
       <h1>Hacer una Reserva</h1>
 
       <input type="number" id="client-id" placeholder="Número de cédula">
-      <input type="number" id="guests" placeholder="Invitados">
+      <input type="number" id="invites" placeholder="Invitados">
       <input type="datetime-local" id="datetime">
 
       <button onclick="makeReservation()">Reservar</button>
+
+      <div id="reservation-message"></div>
 
       <h2>Mis Reservas</h2>
 
@@ -87,7 +111,7 @@
   <script>
 
     // Almacenamiento en memoria temporal
-    let reservations = [];
+    const reservations = [];
 
     // usuarios
     const users = [
@@ -101,8 +125,9 @@
       }
     ];
 
-    function login() {
+    let clientName = '';
 
+    const login = function () {
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
@@ -110,80 +135,99 @@
       const user = users.find(u => u.username === username && u.password === password);
 
       if (user) {
-
         showMainPage();
         clientName = username;
-
+        clearFields(['username', 'password']);
       } else {
         alert('Datos de acceso inválidos');
       }
-    }
+    };
 
-    function makeReservation() {
-
+    const makeReservation = function () {
       const clientId = document.getElementById('client-id').value;
-      const guests = document.getElementById('guests').value;
+      const invites = document.getElementById('invites').value;
       const datetime = document.getElementById('datetime').value;
-      const reservationDate = new Date(datetime).toDateString();
-      if (reservations.some(r => r.clientId === clientId)) {
-        alert("Ya existe una reservación con ese número de cédula");
+      const reservationDate = new Date(datetime).toLocaleString();
+      if (reservations.some(function (r) {
+        const date = new Date(r.datetime).toLocaleString();
+        const diffTime = Math.abs(new Date(date) - new Date(reservationDate));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return date === reservationDate && diffDays <= 1;
+      })) {
+        showMessage('Ya existe una reservación para ese día o el anterior', 'error');
         return;
       }
 
-      if (reservations.some(r => {
-        const date = new Date(r.datetime).toDateString();
+      if (reservations.some(function (r) {
+        const date = new Date(r.datetime).toLocaleString();
         return date === reservationDate;
       })) {
-        alert('Ya existe una reservación para ese día');
+        showMessage('Ya existe una reservación para ese día', 'error');
         return;
       }
 
-      if (guests > 300) {
-        alert('Máximo 300 invitados');
+      if (invites > 300) {
+        showMessage('Máximo 300 invitados', 'error');
         return;
       }
 
       const reservation = {
         clientName,
         clientId,
-        guests,
-        datetime
+        invites,
+        datetime: reservationDate
       };
 
       reservations.push(reservation);
 
       showMyReservations();
+      clearFields(['client-id', 'invites', 'datetime']);
+      showMessage('Reserva exitosa', 'success');
+    };
 
-    }
-
-    function showMainPage() {
+    const showMainPage = function () {
       document.getElementById("login").style.display = "none";
       document.getElementById("main").style.display = "block";
-    }
+    };
 
-    function logout() {
+    const logout = function () {
       document.getElementById("main").style.display = "none";
       document.getElementById("login").style.display = "block";
-    }
+    };
 
-    function showMyReservations() {
-
+    const showMyReservations = function () {
       const container = document.getElementById('my-reservations');
 
       container.innerHTML = '';
 
-      reservations.forEach(r => {
+      reservations.forEach(function (r) {
         container.innerHTML += `
-        <div>
-          <b>Cliente:</b> ${r.clientName} <br>
-          <b>Cédula:</b> ${r.clientId} <br>  
-          <b>Invitados:</b> ${r.guests} <br>
-          <b>Fecha/hora:</b> ${r.datetime}
-        </div>
-      `;
+          <div>
+            <b>Cliente:</b> ${r.clientName} <br>
+            <b>Cédula:</b> ${r.clientId} <br>  
+            <b>Invitados:</b> ${r.invites} <br>
+            <b>Fecha/hora:</b> ${r.datetime}
+          </div>
+        `;
       });
+    };
 
-    }
+    const clearFields = function (fieldIds) {
+      fieldIds.forEach(function (id) {
+        document.getElementById(id).value = '';
+      });
+    };
+
+    const showMessage = function (message, type) {
+      const messageContainer = document.getElementById('reservation-message');
+      messageContainer.textContent = message;
+      messageContainer.className = type;
+      messageContainer.style.display = 'block';
+
+      setTimeout(function () {
+        messageContainer.style.display = 'none';
+      }, 3000);
+    };
 
   </script>
 
