@@ -45,26 +45,14 @@
       background-color: #45a049;
     }
 
-    
+    /* Agrega un poco de espacio entre las reservas */
     #my-reservations div {
       margin-bottom: 20px;
     }
 
-    #reservation-message {
-      margin-top: 20px;
-      padding: 10px;
-      border-radius: 5px;
-      display: none;
-    }
-
-    .success {
-      background-color: #4CAF50;
-      color: white;
-    }
-
-    .error {
-      background-color: #f44336;
-      color: white;
+    #message {
+      color: #4CAF50;
+      text-align: center;
     }
   </style>
 
@@ -93,16 +81,16 @@
       <h1>Hacer una Reserva</h1>
 
       <input type="number" id="client-id" placeholder="Número de cédula">
-      <input type="number" id="invites" placeholder="Invitados">
+      <input type="number" id="guests" placeholder="Invitados">
       <input type="datetime-local" id="datetime">
 
       <button onclick="makeReservation()">Reservar</button>
 
-      <div id="reservation-message"></div>
-
       <h2>Mis Reservas</h2>
 
       <div id="my-reservations"></div>
+
+      <div id="message"></div>
 
     </div>
 
@@ -145,44 +133,48 @@
 
     const makeReservation = function () {
       const clientId = document.getElementById('client-id').value;
-      const invites = document.getElementById('invites').value;
-      const datetime = document.getElementById('datetime').value;
-      const reservationDate = new Date(datetime).toLocaleString();
-      if (reservations.some(function (r) {
-        const date = new Date(r.datetime).toLocaleString();
-        const diffTime = Math.abs(new Date(date) - new Date(reservationDate));
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return date === reservationDate && diffDays <= 1;
-      })) {
-        showMessage('Ya existe una reservación para ese día o el anterior', 'error');
+      const guests = document.getElementById('guests').value;
+      const datetime = new Date(document.getElementById('datetime').value);
+      const reservationDate = datetime.getTime();
+
+      const currentDate = new Date();
+      const currentDateTime = currentDate.getTime();
+
+      if (
+        reservations.some(function (r) {
+          const diffTime = Math.abs(r.datetime - reservationDate);
+          const diffHours = diffTime / (1000 * 60 * 60);
+
+          // Solo permitir reservaciones con al menos 24 horas de diferencia 
+          return diffHours < 24;
+        })
+      ) {
+        alert('Ya existe una reservación para ese día');
         return;
       }
 
-      if (reservations.some(function (r) {
-        const date = new Date(r.datetime).toLocaleString();
-        return date === reservationDate;
-      })) {
-        showMessage('Ya existe una reservación para ese día', 'error');
-        return;
-      }
-
-      if (invites > 300) {
-        showMessage('Máximo 300 invitados', 'error');
+      if (guests > 300) {
+        alert('Máximo 300 invitados');
         return;
       }
 
       const reservation = {
         clientName,
         clientId,
-        invites,
+        guests,
         datetime: reservationDate
       };
 
       reservations.push(reservation);
 
       showMyReservations();
-      clearFields(['client-id', 'invites', 'datetime']);
-      showMessage('Reserva exitosa', 'success');
+      clearFields(['client-id', 'guests', 'datetime']);
+      showMessage('Reserva exitosa. ¡Gracias por elegir POPEYES!');
+
+      // Eliminar el mensaje después de 3 segundos
+      setTimeout(function () {
+        clearMessage();
+      }, 3000);
     };
 
     const showMainPage = function () {
@@ -201,12 +193,18 @@
       container.innerHTML = '';
 
       reservations.forEach(function (r) {
+        // Formatear la fecha
+        const date = new Date(r.datetime);
+        const formatDate = date.toLocaleDateString();
+        const formatTime = date.toLocaleTimeString();
+
         container.innerHTML += `
           <div>
-            <b>Cliente:</b> ${r.clientName} <br>
-            <b>Cédula:</b> ${r.clientId} <br>  
-            <b>Invitados:</b> ${r.invites} <br>
-            <b>Fecha/hora:</b> ${r.datetime}
+            <b>Cliente:</b> ${r.clientName} <br> 
+            <b>Cédula:</b> ${r.clientId} <br>
+            <b>Invitados:</b> ${r.guests} <br>
+            <b>Fecha:</b> ${formatDate} <br> 
+            <b>Hora:</b> ${formatTime}
           </div>
         `;
       });
@@ -218,15 +216,14 @@
       });
     };
 
-    const showMessage = function (message, type) {
-      const messageContainer = document.getElementById('reservation-message');
-      messageContainer.textContent = message;
-      messageContainer.className = type;
-      messageContainer.style.display = 'block';
+    const showMessage = function (message) {
+      const messageElement = document.getElementById('message');
+      messageElement.textContent = message;
+    };
 
-      setTimeout(function () {
-        messageContainer.style.display = 'none';
-      }, 3000);
+    const clearMessage = function () {
+      const messageElement = document.getElementById('message');
+      messageElement.textContent = '';
     };
 
   </script>
