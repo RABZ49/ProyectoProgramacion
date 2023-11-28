@@ -81,7 +81,7 @@
       <h1>Hacer una Reserva</h1>
 
       <input type="number" id="client-id" placeholder="Número de cédula">
-      <input type="number" id="guests" placeholder="Invitados">
+      <input type="number" id="invites" placeholder="Invitados">
       <input type="datetime-local" id="datetime">
 
       <button onclick="makeReservation()">Reservar</button>
@@ -133,7 +133,7 @@
 
     const makeReservation = function () {
       const clientId = document.getElementById('client-id').value;
-      const guests = document.getElementById('guests').value;
+      const invites = document.getElementById('invites').value;
       const datetime = new Date(document.getElementById('datetime').value);
       const reservationDate = datetime.getTime();
 
@@ -153,7 +153,7 @@
         return;
       }
 
-      if (guests > 300) {
+      if (invites > 300) {
         alert('Máximo 300 invitados');
         return;
       }
@@ -161,14 +161,14 @@
       const reservation = {
         clientName,
         clientId,
-        guests,
+        invites,
         datetime: reservationDate
       };
 
       reservations.push(reservation);
 
       showMyReservations();
-      clearFields(['client-id', 'guests', 'datetime']);
+      clearFields(['client-id', 'invites', 'datetime']);
       showMessage('Reserva exitosa. ¡Gracias por elegir POPEYES!');
 
       // Eliminar el mensaje después de 3 segundos
@@ -202,7 +202,7 @@
           <div>
             <b>Cliente:</b> ${r.clientName} <br> 
             <b>Cédula:</b> ${r.clientId} <br>
-            <b>Invitados:</b> ${r.guests} <br>
+            <b>Invitados:</b> ${r.invites} <br>
             <b>Fecha:</b> ${formatDate} <br> 
             <b>Hora:</b> ${formatTime}
           </div>
